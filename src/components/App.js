@@ -4,32 +4,22 @@ import Footer from "./Footer";
 import Content from "./Content";
 import { useState } from "react";
 import Addnewitem from "./Addnewitem";
+import Searchbar from "./Searchbar";
 
 function App() {
-  const [content, setContent] = useState([
-    {
-      id: 1,
-      checkbox: true,
-      title: "learned react",
-    },
-    {
-      id: 2,
-      checkbox: false,
-      title: "learned java",
-    },
-    {
-      id: 3,
-      checkbox: true,
-      title: "learned html",
-    },
-  ]);
+  const [content, setContent] = useState(
+    JSON.parse(localStorage.getItem("todolist"))
+  );
   const [addItem, setAddItem] = useState("");
+  const [search, setSearch] = useState("");
 
   const newItem = (item) => {
     const id = content.length ? content[content.length - 1].id + 1 : 1;
     const newAddedItem = { id: id, checkbox: false, title: item };
     const newCreatedItem = [...content, newAddedItem];
     setContent(newCreatedItem);
+    localStorage.setItem("todolist", JSON.stringify(newCreatedItem));
+    console.log(newCreatedItem);
   };
 
   const handleChange = (id) => {
@@ -66,8 +56,11 @@ function App() {
         setAddItem={setAddItem}
         handleSubmit={handleSubmit}
       />
+      <Searchbar search={search} setSearch={setSearch} />
       <Content
-        content={content}
+        content={content.filter((item) =>
+          item.title.toLowerCase().includes(search.toLowerCase())
+        )}
         handleDelete={handleDelete}
         handleChange={handleChange}
       />
